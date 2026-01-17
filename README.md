@@ -132,8 +132,3 @@ Invoke-RestMethod -Uri http://localhost:5205/products
 ## About
 
 .NET 9.0 Full Stack Web Application built for the Microsoft Back-End Development course as part of the Microsoft Full-Stack Certification track. This comprehensive educational project demonstrates real-world full-stack development patterns and best practices.
-
-**Author**: [@boricua007](https://github.com/boricua007)  
-**Version**: 1.0.0  
-**Last Updated**: January 17, 2026  
-**Repository**: [MSFD_FullStackSolution](https://github.com/boricua007/MSFD_FullStackSolution)
