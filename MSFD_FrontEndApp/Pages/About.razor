@@ -1,0 +1,169 @@
+@page "/about"
+@inject HttpClient Http
+@using Markdig
+@using System.Text.Json.Serialization
+
+<PageTitle>About</PageTitle>
+
+<div class="about-header">
+    @if (!string.IsNullOrEmpty(avatarUrl))
+    {
+        <img src="@avatarUrl" alt="Profile Avatar" class="avatar" />
+    }
+    <h1>About Me</h1>
+</div>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+else if (readmeContent == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="readme-content">
+        @((MarkupString)readmeContent)
+    </div>
+}
+
+@code {
+    private string? readmeContent;
+    private string? avatarUrl;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Fetch GitHub user info for avatar
+            var userResponse = await Http.GetAsync("https://api.github.com/users/boricua007");
+            if (userResponse.IsSuccessStatusCode)
+            {
+                var jsonContent = await userResponse.Content.ReadAsStringAsync();
+                var user = System.Text.Json.JsonSerializer.Deserialize<GitHubUser>(jsonContent);
+                avatarUrl = user?.AvatarUrl;
+            }
+
+            // Fetch README from GitHub
+            var rawUrl = "https://raw.githubusercontent.com/boricua007/boricua007/main/README.md";
+            var markdownText = await Http.GetStringAsync(rawUrl);
+            
+            // Convert markdown to HTML
+            readmeContent = Markdown.ToHtml(markdownText);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading content: {ex.Message}";
+        }
+    }
+
+    private class GitHubUser
+    {
+        [JsonPropertyName("avatar_url")]
+        public string? AvatarUrl { get; set; }
+    }
+}
+
+<style>
+    .about-header {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 32px;
+        padding-bottom: 24px;
+        border-bottom: 2px solid #eaecef;
+    }
+    
+    .avatar {
+        width: 128px;
+        height: 128px;
+        border-radius: 50%;
+        border: 3px solid #0366d6;
+        object-fit: cover;
+    }
+    
+    .about-header h1 {
+        margin: 0;
+        font-size: 2.5em;
+        border: none;
+        padding: 0;
+    }
+    
+    .readme-content {
+        line-height: 1.6;
+    }
+    
+    .readme-content h1,
+    .readme-content h2,
+    .readme-content h3 {
+        margin-top: 24px;
+        margin-bottom: 16px;
+        font-weight: 600;
+        line-height: 1.25;
+    }
+    
+    .readme-content h1 {
+        font-size: 2em;
+        border-bottom: 1px solid #eaecef;
+        padding-bottom: 0.3em;
+    }
+    
+    .readme-content h2 {
+        font-size: 1.5em;
+        border-bottom: 1px solid #eaecef;
+        padding-bottom: 0.3em;
+    }
+    
+    .readme-content a {
+        color: #0366d6;
+        text-decoration: none;
+    }
+    
+    .readme-content a:hover {
+        text-decoration: underline;
+    }
+    
+    .readme-content code {
+        background-color: rgba(27, 31, 35, 0.05);
+        border-radius: 3px;
+        font-size: 85%;
+        margin: 0;
+        padding: 0.2em 0.4em;
+    }
+    
+    .readme-content pre {
+        background-color: #f6f8fa;
+        border-radius: 6px;
+        padding: 16px;
+        overflow: auto;
+    }
+    
+    .readme-content pre code {
+        background-color: transparent;
+        padding: 0;
+    }
+    
+    .readme-content blockquote {
+        border-left: 0.25em solid #dfe2e5;
+        color: #6a737d;
+        padding: 0 1em;
+        margin: 0 0 16px 0;
+    }
+    
+    .readme-content ul,
+    .readme-content ol {
+        margin-bottom: 16px;
+        padding-left: 2em;
+    }
+    
+    .readme-content li {
+        margin-bottom: 8px;
+    }
+    
+    .readme-content img {
+        max-width: 100%;
+        height: auto;
+    }
+</style>

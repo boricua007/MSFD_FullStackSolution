@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.3" PrivateAssets="all" />
+    <PackageReference Include="Markdig" Version="0.37.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Exclude nested backend project files so the front-end project doesn't compile them -->
+    <Compile Remove="MSFD_BackEndApp\\**\\*.cs" />
+    <Content Remove="MSFD_BackEndApp\\**\\*.*" />
+    <None Remove="MSFD_BackEndApp\\**\\*.*" />
+  </ItemGroup>
+
+</Project>

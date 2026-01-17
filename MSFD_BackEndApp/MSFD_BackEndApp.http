@@ -1,0 +1,6 @@
+@MSFD_BackEndApp_HostAddress = http://localhost:5205
+
+GET {{MSFD_BackEndApp_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
